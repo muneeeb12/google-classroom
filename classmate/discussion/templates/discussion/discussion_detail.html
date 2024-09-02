@@ -1,0 +1,32 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Discussion Detail - {{ topic.title }}{% endblock %}
+
+{% block content %}
+<div class="m-10">
+    <h1 class="text-2xl font-semibold mb-4">{{ topic.title }}</h1>
+    {% if posts %}
+    <ul>
+        {% for post in posts %}
+        <li class="mb-2 p-2 bg-gray-100 rounded-lg">
+            <strong>{{ post.user.user.username }}:</strong> {{ post.message }}
+            <small class="text-sm text-gray-500">{{ post.created_at|date:"M d, Y H:i" }}</small>
+            {% if request.user == post.user.user %}
+            <a href="{% url 'delete_post' post.id %}" class="text-red-500 ml-2">Delete</a>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>No posts yet.</p>
+    {% endif %}
+    <div class="mt-6">
+        <h2 class="text-xl font-semibold">Add a Post</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="bg-green-500 text-white px-4 py-2 rounded-lg">Post Message</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

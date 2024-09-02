@@ -1,0 +1,63 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Classroom Submissions{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-6">
+    <h1 class="text-2xl font-semibold mb-6 text-center">Classroom Submissions</h1>
+    {% if classroom_submissions %}
+    <div class="space-y-4">
+        {% for classroom, submissions in classroom_submissions.items %}
+        <div class="bg-white rounded-lg shadow p-4">
+            <h2 class="text-lg font-bold text-gray-800 mb-2">{{ classroom.title }}</h2>
+            {% if submissions %}
+            <div class="overflow-x-auto">
+                <table class="min-w-full text-sm divide-y divide-gray-200">
+                    <thead>
+                        <tr class="text-left text-gray-600">
+                            <th class="py-2 font-medium">Student</th>
+                            <th class="py-2 font-medium">Submission</th>
+                            <th class="py-2 font-medium">Grade</th>
+                            <th class="py-2 font-medium">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        {% for submission in submissions %}
+                        <tr>
+                            <td class="py-2">{{ submission.student.user.username }}</td>
+                            <td class="py-2">
+                                <a href="{{ submission.file.url }}" target="_blank" class="text-blue-500 hover:text-blue-700">View Submission</a>
+                            </td>
+                            <td class="py-2">
+                                {% if submission.is_graded %}
+                                    {{ submission.grade_instance }} / {{ submission.assignment.total_marks }}
+                                {% else %}
+                                    Not yet graded
+                                {% endif %}
+                            </td>
+                            <td class="py-2">
+                                {% if submission.is_graded %}
+                                    <a href="{% url 'classroom:grade_submission' submission.id %}" class="text-blue-500 hover:text-blue-700">Edit Grade</a>
+                                {% else %}
+                                    <a href="{% url 'classroom:grade_submission' submission.id %}" class="text-blue-500 hover:text-blue-700">Grade Submission</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <p class="text-gray-500">No submissions found for this classroom.</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-white rounded-lg shadow p-4 text-center">
+        <p class="text-gray-500">No classrooms with submissions found.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'core/base.html' %}
+
+{% load tz %}  <!-- Load the timezone template tag library -->
+
+{% block title %}Assignment Detail - {{ assignment.title }}{% endblock %}
+
+{% block content %}
+<div class="flex justify-center">
+    <div class="max-w-4xl w-full">
+
+        <div class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+            <h1 class="text-2xl font-semibold mb-4">{{ assignment.title }}</h1>
+            <p class="text-lg mb-4">{{ assignment.description }}</p>
+            <p><strong>Due Date:</strong> {{ assignment.due_date|date:"Y-m-d" }}</p>
+
+            {% if assignment.due_date|date:"Y-m-d" < now|date:"Y-m-d" %}
+            <div class="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                <span class="font-medium">Missing!</span> This assignment was due and is currently missing.
+            </div>
+            {% endif %}
+
+            {% if assignment.file %}
+            <p><a href="{{ assignment.file.url }}" target="_blank" class="text-blue-500 hover:underline">Download Attachment</a></p>
+            {% else %}
+            <p>No attachment available.</p>
+            {% endif %}
+
+            <p class="text-lg"><strong>Total Marks:</strong> {{ assignment.get_total_marks }}</p>
+
+            {% if assignment.due_date|date:"Y-m-d" > now|date:"Y-m-d" %}
+                {% if submission_exists %}
+                <a href="{% url 'submission:unsubmit_assignment' existing_submission.id %}" class="text-red-500 hover:underline">Unsubmit</a>
+                <p>You have already submitted this assignment.</p>
+                {% else %}
+                <form method="post" enctype="multipart/form-data" class="mt-4">
+                    {% csrf_token %}
+                    {{ submission_form.as_p }}
+                    <button name="submit_assignment" type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        Upload Submission
+                    </button>
+                </form>
+                {% endif %}
+            {% else %}
+            <p class="text-red-500">Assignment submission is closed.</p>
+            {% endif %}
+            
+            <div class="mt-6">
+                <h2 class="text-xl font-semibold">Comments</h2>
+                <form method="post" class="mb-4">
+                    {% csrf_token %}
+                    {{ comment_form.as_p }}
+                    <button name="add_comment" type="submit" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                        Add Comment
+                    </button>
+                </form>
+                <ul>
+                    {% for comment in comments %}
+                    <li class="mb-2 p-2 bg-gray-100 rounded-lg">
+                        <strong>{{ comment.user.user.username }}:</strong> {{ comment.text }}
+                        <small class="text-sm text-gray-500">{{ comment.created_at|date:"M d, Y" }}</small>
+                        {% if request.user == comment.user.user %}
+                        <a href="{% url 'comment:delete_comment' comment.id %}" class="ml-4 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded">
+                            Delete
+                        </a>
+                        {% endif %}
+                    </li>
+                    {% empty %}
+                    <p>No comments yet.</p>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

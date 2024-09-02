@@ -1,0 +1,55 @@
+{% extends 'core/base.html' %}
+
+{% block title %}My Assignments{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4">
+    <h1 class="text-xl font-semibold mb-4">My Assignments</h1>
+    
+    <h2 class="text-lg font-semibold text-blue-600 mt-6">Todo</h2>
+    <ul class="mb-5">
+        {% for assignment in todo_assignments %}
+        <li class="mb-4 p-4 border rounded-lg shadow bg-white">
+            <h2 class="text-lg font-bold">{{ assignment.title }}</h2>
+            <p>{{ assignment.description|default:"No description provided." }}</p>
+            <p><strong>Due:</strong> {{ assignment.due_date|date:"Y-m-d" }}</p>
+            {% if assignment.file %}
+            <a href="{{ assignment.file.url }}" class="text-blue-500 hover:underline">Download Attachment</a>
+            {% else %}
+            <span class="text-gray-500">No attachment available.</span>
+            {% endif %}
+        </li>
+        {% empty %}
+        <p class="text-gray-700">No assignments to do.</p>
+        {% endfor %}
+    </ul>
+
+    <h2 class="text-lg font-semibold text-green-600 mt-6">Submitted</h2>
+    <ul class="mb-5">
+        {% for assignment in submitted_assignments %}
+        <li class="mb-4 p-4 border rounded-lg shadow bg-white">
+            <h2 class="text-lg font-bold">{{ assignment.title }}</h2>
+            <p>{{ assignment.description|default:"No description provided." }}</p>
+            <p><strong>Due:</strong> {{ assignment.due_date|date:"Y-m-d" }}</p>
+            <span class="text-green-500">Submitted</span>
+        </li>
+        {% empty %}
+        <p class="text-gray-700">No submitted assignments.</p>
+        {% endfor %}
+    </ul>
+
+    <h2 class="text-lg font-semibold text-red-600 mt-6">Missing</h2>
+    <ul class="mb-5">
+        {% for assignment in missing_assignments %}
+        <li class="mb-4 p-4 border rounded-lg shadow bg-white">
+            <h2 class="text-lg font-bold">{{ assignment.title }}</h2>
+            <p>{{ assignment.description|default:"No description provided." }}</p>
+            <p><strong>Due:</strong> {{ assignment.due_date|date:"Y-m-d" }}</p>
+            <span class="text-red-500">Missing</span>
+        </li>
+        {% empty %}
+        <p class="text-gray-700">No missing assignments.</p>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

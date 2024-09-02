@@ -1,0 +1,20 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Join Classroom{% endblock %}
+
+{% block content %}
+    <h1 class="text-2xl font-semibold mb-4">Join Classroom</h1>
+
+    <!-- Join Classroom Form -->
+    <form method="get" action="{% url 'classroom:join_classroom' %}" class="mb-4">
+        {% csrf_token %}
+        <label for="code" class="text-xl">Enter Classroom Code:</label><br>
+        <input type="text" id="code" name="code" class="bg-gray-200 px-4 py-2 text-xl rounded-lg" required><br>
+        <button type="submit" class="bg-teal-500 text-white px-6 py-2 rounded-lg mt-2">Join</button>
+    </form>
+
+    <!-- Display Error Message (if any) -->
+    {% if error_message %}
+        <p class="text-red-500">{{ error_message }}</p>
+    {% endif %}
+{% endblock %}

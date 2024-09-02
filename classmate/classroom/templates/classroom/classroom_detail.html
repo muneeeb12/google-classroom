@@ -1,0 +1,117 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Classroom Detail - {{ classroom.title }}{% endblock %}
+
+{% block content %}
+    <div class="grid grid-cols-4 gap-6">
+        <!-- Sidebar for Students -->
+        <div class="col-span-1 bg-white shadow-lg rounded-lg p-4">
+            <h3 class="font-semibold text-lg mb-4">Enrolled Students</h3>
+            <ul class="divide-y divide-gray-200">
+                {% for student in classroom_students %}
+                    <li class="py-2 {% if student.id == current_student_id %} bg-gray-100 {% endif %}">
+                        <a href="#" class="text-blue-600 hover:text-blue-800 transition duration-150 ease-in-out">{{ student.user.username }}</a>
+                    </li>
+                {% empty %}
+                    <p>No students enrolled.</p>
+                {% endfor %}
+            </ul>
+            <a href="{% url 'classroom:classroom_discussions' classroom.id %}" class="mt-4 inline-block w-full text-center py-2 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-300">Discussion</a>
+
+            {% if is_instructor %}
+                <button id="toggle-assignment-form" class="mt-4 inline-block w-full text-center py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition duration-300">
+                    Create Assignment
+                </button>
+                <button id="toggle-lecture-form" class="mt-4 inline-block w-full text-center py-2 bg-purple-500 text-white font-semibold rounded-lg hover:bg-purple-600 transition duration-300">
+                    Create Lecture
+                </button>
+            {% endif %}
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="col-span-3">
+            <div class="bg-white shadow-lg rounded-lg p-6">
+                <h1 class="text-2xl font-semibold mb-4">{{ classroom.title }}</h1>
+                <p class="text-lg mb-4">{{ classroom.description }}</p>
+
+                <h2 class="text-xl font-semibold mb-2">Lectures</h2>
+                <div class="space-y-4">
+                    {% for lecture in lectures %}
+                        <a href="{% url 'classroom:lecture_detail' lecture.id %}" class="block bg-gray-100 rounded-lg p-4 hover:bg-blue-100 transition duration-300 ease-in-out">
+                            <h3 class="text-lg font-semibold">{{ lecture.title }}</h3>
+                            <p class="text-sm">
+                                {% if lecture.description %}
+                                    {{ lecture.description }}
+                                {% else %}
+                                    No description available for this lecture.
+                                {% endif %}
+                            </p>
+                        </a>
+                    {% empty %}
+                        <p>No lectures available.</p>
+                    {% endfor %}
+                </div>
+
+                <h2 class="text-xl font-semibold mt-6 mb-2">Assignments</h2>
+                <div class="space-y-4">
+                    {% for assignment in assignments %}
+                        <a href="{% url 'classroom:assignment_detail' assignment.id %}" class="block bg-gray-100 rounded-lg p-4 hover:bg-blue-100 transition duration-300 ease-in-out">
+                            <h3 class="text-lg font-semibold">{{ assignment.title }}</h3>
+                            {% if assignment.due_date %}
+                                <p class="text-sm text-red-500 font-semibold">Due Date: {{ assignment.due_date }}</p>
+                            {% endif %}
+                            <p class="text-sm text-green-500 font-semibold">Total Marks: {{ assignment.total_marks }}</p> <!-- Displaying total marks -->
+                        </a>
+                    {% empty %}
+                        <p>No assignments available.</p>
+                    {% endfor %}
+                </div>
+
+                {% if is_instructor %}
+                <!-- Assignment Creation Form (Initially Hidden) -->
+                <div id="assignment-form" class="mt-8 p-4 bg-teal-100 rounded-lg shadow-inner" style="display: none;">
+                    <h3 class="text-xl font-semibold mb-4">Create New Assignment</h3>
+                    <form method="post" enctype="multipart/form-data" class="space-y-4">
+                        {% csrf_token %}
+                        {{ assignment_creation_form.as_p }}
+                        <button name="submit_assignment" type="submit" class="bg-teal-500 hover:bg-teal-700 text-white font-bold py-2 px-4 rounded">
+                            Create Assignment
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Lecture Creation Form (Initially Hidden) -->
+                <div id="lecture-form" class="mt-8 p-4 bg-indigo-100 rounded-lg shadow-inner" style="display: none;">
+                    <h3 class="text-xl font-semibold mb-4">Create New Lecture</h3>
+                    <form method="post" enctype="multipart/form-data" class="space-y-4">
+                        {% csrf_token %}
+                        {{ lecture_creation_form.as_p }}
+                        <button name="submit_lecture" type="submit" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                            Create Lecture
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript for toggling form visibility -->
+    <script>
+        document.getElementById('toggle-assignment-form').addEventListener('click', function () {
+            var assignmentForm = document.getElementById('assignment-form');
+            var lectureForm = document.getElementById('lecture-form');
+    
+            assignmentForm.style.display = assignmentForm.style.display === 'none' ? 'block' : 'none';
+            lectureForm.style.display = 'none';
+        });
+    
+        document.getElementById('toggle-lecture-form').addEventListener('click', function () {
+            var assignmentForm = document.getElementById('assignment-form');
+            var lectureForm = document.getElementById('lecture-form');
+    
+            lectureForm.style.display = lectureForm.style.display === 'none' ? 'block' : 'none';
+            assignmentForm.style.display = 'none';
+        });
+    </script>
+{% endblock %}

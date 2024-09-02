@@ -1,0 +1,62 @@
+{% extends 'core/base.html' %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block content %}
+    <div class="container mx-auto px-4 py-8">
+        <h1 class="text-5xl font-bold text-center text-gray-800 mb-12">
+            <span class="text-teal-500">Welcome</span> to the Virtual Classroom
+        </h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <!-- Courses -->
+            <div class="p-6 bg-white rounded-lg shadow-lg space-y-4">
+                <div class="text-2xl font-semibold text-black">Explore Courses</div>
+                <div class="text-gray-600">
+                    {% if request.user.is_instructor %}
+                        <p><i>Manage and organize your courses.</i></p>
+                        <a href="{% url 'classroom:instructor_courses' %}" class="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out">
+                            Instructor Courses
+                        </a>
+                    {% else %}
+                        <p><i>Access and manage your courses here.</i></p>
+                        <a href="{% url 'classroom:list_courses' %}" class="inline-block px-6 py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition duration-300 ease-in-out">
+                            View Courses
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Assignments -->
+            <div class="p-6 bg-white rounded-lg shadow-lg space-y-4">
+                <div class="text-2xl font-semibold text-black">Assignments</div>
+                <div class="text-gray-600">
+                    {% if request.user.is_instructor %}
+                        <p><i>Review and evaluate assignments.</i></p>
+                        <a href="{% url 'classroom:show_submissions' %}" class="inline-block px-6 py-3 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition duration-300 ease-in-out">
+                            View Submissions
+                        </a>                    
+                    {% else %}
+                        <p><i>Submit and check the statuses of your assignments.</i></p>
+                        <a href="{% url 'classroom:view_assignments' %}" class="inline-block px-6 py-3 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition duration-300 ease-in-out">
+                            Manage Assignments
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Discussions -->
+            <div class="p-6 bg-white rounded-lg shadow-lg space-y-4">
+                <div class="text-2xl font-semibold text-black">Discussions</div>
+                <div class="text-gray-600">
+                    <p><i>Engage in course discussions and forums.</i></p>
+                </div>
+                <a href="#" class="inline-block px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition duration-300 ease-in-out">
+                    Start Discussing
+                </a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

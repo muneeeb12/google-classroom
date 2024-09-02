@@ -1,0 +1,69 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Courses{% endblock %}
+
+{% block content %}
+<div class="container mx-auto px-4 py-8 bg-gray-100 rounded-lg">
+    <h1 class="text-3xl font-bold text-indigo-600 mb-6 text-center">Courses Dashboard</h1>
+
+    <!-- Button to Toggle Join Classroom Form -->
+    <button class="join-classroom-button bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded-lg mb-6 mx-auto block transition duration-300 ease-in-out">
+        <i class="fas fa-sign-in-alt mr-2"></i> Join a Classroom
+    </button>
+
+    <!-- Join Classroom Form - More Compact -->
+    <div id="join-classroom-form" class="max-w-lg mx-auto bg-white rounded-lg shadow-md p-6 mb-6 hidden">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Join a Classroom</h2>
+        <form method="get" action="{% url 'classroom:join_classroom' %}" class="flex items-end gap-2">
+            {% csrf_token %}
+            <div class="flex-grow">
+                <label for="code" class="sr-only">Classroom Code:</label>
+                <input type="text" id="code" name="code" placeholder="Enter Classroom Code" class="mt-1 block w-full px-4 py-2 bg-gray-200 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500" required>
+            </div>
+            <button type="submit" class="shrink-0 bg-teal-500 hover:bg-teal-600 text-white font-medium rounded-lg text-sm px-5 py-2.5 transition duration-300 ease-in-out">
+                Join
+            </button>
+        </form>
+        <button class="cancel-button bg-red-500 hover:bg-red-700 text-white font-medium py-2 px-4 rounded-lg mt-4 transition duration-300 ease-in-out">
+            Cancel
+        </button>
+    </div>
+
+    <!-- Display Enrolled Courses -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
+        {% for course in enrolled_classes %}
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300 ease-in-out">
+            <a href="{% url 'classroom:classroom_detail' course.classroom.id %}" class="block p-6 hover:bg-gray-50">
+                <div class="flex items-center mb-4">
+                    <div class="w-10 h-10 rounded-full bg-indigo-100 mr-4 flex items-center justify-center">
+                        <i class="fas fa-book text-indigo-600 text-lg"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-800">{{ course.classroom.title }}</h3>
+                </div>
+                <p class="text-gray-600">{{ course.classroom.description|truncatewords:20 }}</p>
+            </a>
+        </div>
+        {% empty %}
+        <p class="text-gray-600 col-span-full text-center">You are not enrolled in any courses yet.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // Get the join classroom form element
+    const joinClassroomForm = document.getElementById('join-classroom-form');
+
+    // Add event listener for toggling the "Join Classroom" form visibility
+    document.addEventListener('click', function(event) {
+        // Toggle form visibility with the "Join" button
+        if (event.target.classList.contains('join-classroom-button')) {
+            joinClassroomForm.classList.toggle('hidden');
+        }
+
+        // Hide form with the "Cancel" button
+        if (event.target.classList.contains('cancel-button')) {
+            joinClassroomForm.classList.add('hidden');
+        }
+    });
+</script>
+{% endblock %}

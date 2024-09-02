@@ -1,0 +1,48 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Create a New Course{% endblock %}
+
+{% block content %}
+<div class="flex justify-center mt-8">
+    <div class="max-w-2xl w-full bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+        <h1 class="text-2xl font-semibold mb-6">Create a New Course</h1>
+
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="mb-4">
+                {{ form.title.label_tag }}
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <div class="text-red-600">{{ form.title.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                {{ form.description.label_tag }}
+                {{ form.description }}
+                {% if form.description.errors %}
+                    <div class="text-red-600">{{ form.description.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="mb-4">
+                {{ form.code.label_tag }}
+                {{ form.code }}
+                {% if form.code.errors %}
+                    <div class="text-red-600">{{ form.code.errors }}</div>
+                {% endif %}
+            </div>
+
+            <div class="flex items-center justify-between">
+                <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                    Create Course
+                </button>
+                <a href="{% url 'classroom:list_courses' %}" class="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800">
+                    Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

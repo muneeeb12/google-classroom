@@ -1,0 +1,24 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Discussions - {{ classroom.title }}{% endblock %}
+
+{% block content %}
+<div class="m-10">
+    <h1 class="text-2xl font-semibold mb-4">Discussion Topics in {{ classroom.title }}</h1>
+    <ul class="mb-6 border p-4 ">
+        {% for topic in topics %}
+        <li class="p-2 border">
+            <a href="{% url 'classroom:discussion_detail' topic.id %}" class="text-blue-500 hover:underline">
+                {{ topic.title }}
+            </a> - <small>Created on {{ topic.created_at|date:"Y-m-d" }}</small>
+            {% if request.user == topic.user.user %}
+                - <a href="{% url 'classroom:delete_topic' topic.id %}" class="text-red-500 hover:underline">Delete</a>
+            {% endif %}
+        </li>
+        {% empty %}
+        <p>No topics yet. <a href="{% url 'classroom:create_topic' classroom.id %}" class="text-blue-500 hover:underline">Create one?</a></p>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'classroom:create_topic' classroom.id %}" class="bg-teal-500 text-white px-6 py-2 rounded-lg mt-2">Create New Topic</a>
+</div>
+{% endblock %}

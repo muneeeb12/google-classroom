@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Instructor Courses{% endblock %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 class="text-3xl font-bold">Instructor Courses</h1>
+        <a href="{% url 'classroom:course_creation' %}"
+           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">
+            Create New Course
+        </a>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for class in classrooms %}
+            <div class="bg-white shadow-lg rounded-lg overflow-hidden hover:shadow-2xl transition duration-300">
+                <a href="{% url 'classroom:classroom_detail' class.id %}">
+                    <div class="p-6">
+                        <h2 class="text-2xl font-semibold mb-2">{{ class.title }}</h2>
+                        <p class="text-sm text-gray-500 mb-2">
+                            Instructor: {{ class.instructor.user }}  <!-- Adjust field names based on your actual model -->
+                        </p>
+                        <p class="text-sm text-gray-500 mb-4">{{ class.description|truncatewords:15 }}</p>
+                        <span class="bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded-lg">Code: {{ class.code }}</span>
+                    </div>
+                </a>
+            </div>
+        {% empty %}
+            <div class="col-span-full text-center p-6 bg-gray-100 rounded-lg">
+                <p class="text-lg font-semibold text-gray-700">No courses available.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
